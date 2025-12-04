@@ -1,3 +1,4 @@
+<!-- The complete HTML file containing all tools, including the new IP reference list. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,23 +10,63 @@
     <!-- Use Inter font -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* Define custom Tailwind color for VUB Orange */
+        tailwind.config = {
+            darkMode: 'class', /* Enable dark mode based on 'dark' class on <html> */
+            theme: {
+                extend: {
+                    colors: {
+                        'vub-orange': '#ff6600',
+                        'vub-dark-orange': '#cc5200',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f7f9fb;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Dark Mode Specific Styles */
+        html.dark body {
+            background-color: #111827; /* Gray-900 */
+        }
+        html.dark .tool-card {
+            background-color: #1f2937; /* Gray-800 */
+            border-top-color: #cc5200 !important;
+        }
+        html.dark .tool-card h2 {
+            color: #f9fafb;
+        }
+        html.dark .tool-card p {
+            color: #d1d5db;
+        }
+        html.dark .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tool-card {
+             transition: all 0.3s;
         }
         .modal-overlay {
             background-color: rgba(0, 0, 0, 0.75);
             transition: opacity 0.3s ease-in-out;
         }
-        .tool-card:hover {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
         /* Custom scrollbar for output area */
-        #scan-output-area::-webkit-scrollbar, #json-output-area::-webkit-scrollbar {
+        #scan-output-area::-webkit-scrollbar, #json-output-area::-webkit-scrollbar, #room-results-container::-webkit-scrollbar {
             width: 8px;
         }
-        #scan-output-area::-webkit-scrollbar-thumb, #json-output-area::-webkit-scrollbar-thumb {
+        #scan-output-area::-webkit-scrollbar-thumb, #json-output-area::-webkit-scrollbar-thumb, #room-results-container::-webkit-scrollbar-thumb {
             background-color: #9ca3af;
             border-radius: 4px;
         }
@@ -37,88 +78,139 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-white shadow-lg p-4 md:p-6 sticky top-0 z-10">
+    <header class="bg-white dark:bg-gray-800 shadow-lg p-4 md:p-6 sticky top-0 z-10 transition-colors duration-300">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-3xl font-extrabold text-[#3a4e9b] tracking-tight">
-                VUB <span class="text-gray-600">AV Tools</span>
+            <h1 class="text-3xl font-extrabold text-vub-orange tracking-tight">
+                VUB <span class="text-gray-600 dark:text-gray-300">AV Tools</span>
             </h1>
-            <span class="text-sm font-medium text-gray-500 hidden sm:block">
-                Technical Utilities Dashboard
-            </span>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-yellow-400 hover:ring-2 ring-vub-orange transition" aria-label="Toggle dark mode">
+                    <svg id="sun-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                
+                <span class="text-sm font-medium text-gray-500 dark:text-gray-400 hidden sm:block">
+                    Technical Utilities
+                </span>
+            </div>
         </div>
     </header>
 
     <!-- Tool Grid -->
     <main class="max-w-7xl mx-auto p-4 md:p-8">
-        <p class="text-lg text-gray-600 mb-8">Select a utility tool grouped by category:</p>
+        <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">Select a utility tool grouped by category:</p>
 
-        <!-- Category: Network Tools -->
-        <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-gray-200 pb-2 mb-6 mt-8 flex items-center">
-            <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9h-3a8 8 0 00-8 8m-2.985-1.756c-.111-.133-.217-.266-.32-.41a.548.548 0 01-.018-.029.587.587 0 01-.005-.008.57.57 0 01-.027-.038C6.467 15.111 5.925 14.545 5 13.918 4.075 13.313 4 12 4 12c0-2.458 1.48-4.52 3.515-5.594"></path></svg>
-            Network
+        <!-- Category: Campus & Room Information (Moved to Top) -->
+        <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-200 border-b-2 border-gray-200 dark:border-gray-700 pb-2 mb-6 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-vub-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-2M5 21h2M12 21V9"></path></svg>
+            Campus & Documentation
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Tool 7: MAC Vendor Lookup -->
-            <div id="tool-mac-vendor" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-blue-500" onclick="openModal('mac-vendor-lookup')">
+            <!-- Tool 4: Room Info Lookup -->
+            <div id="tool-room-info" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-vub-orange" onclick="openModal('room-info')">
                 <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2a3 3 0 00-3 3v2m8-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-8 h-8 text-vub-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-800">MAC Vendor Lookup</h2>
-                        <p class="text-sm text-gray-500">Identify the manufacturer (OUI) and possible model.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Tool 1: MAC Address Formatter -->
-            <div id="tool-mac-formatter" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-indigo-500" onclick="openModal('mac-formatter')">
-                <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">MAC Address Formatter</h2>
-                        <p class="text-sm text-gray-500">Clean up and format MAC addresses (batch supported).</p>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Room Info Lookup</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Quickly find capacity and facilities for VUB rooms.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Tool 2: VUBnet Tester -->
-            <div id="tool-vubnet-tester" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-green-500" onclick="openModal('vubnet-tester')">
+            <!-- Tool 8: Manual Lookup -->
+            <div id="tool-manual-lookup" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-vub-dark-orange" onclick="openModal('manual-lookup')">
                 <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5l7 7-7 7"></path></svg>
+                    <svg class="w-8 h-8 text-vub-dark-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-800">VUBnet Tester (Simulated)</h2>
-                        <p class="text-sm text-gray-500">Test network connectivity to core VUB addresses.</p>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Device Manual Lookup</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Search for technical manuals by manufacturer or model.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Tool 5: IP Range Scanner -->
-            <div id="tool-ip-scanner" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-purple-500" onclick="openModal('ip-scanner')">
+             <!-- Tool 9: IP Reference -->
+            <div id="tool-ip-reference" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-vub-orange" onclick="openModal('ip-reference')">
                 <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 0a2 2 0 100 4 2 2 0 000-4zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-8 h-8 text-vub-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-800">IP Range Scanner (Simulated)</h2>
-                        <p class="text-sm text-gray-500">Scan a mock IP range and discover devices.</p>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">VUB IP Reference</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Quickly view essential VUB network and public IPs.</p>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Category: Network Tools -->
+        <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-200 border-b-2 border-gray-200 dark:border-gray-700 pb-2 mb-6 mt-10 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9h-3a8 8 0 00-8 8m-2.985-1.756c-.111-.133-.217-.266-.32-.41a.548.548 0 01-.018-.029.587.587 0 01-.005-.008.57.57 0 01-.027-.038C6.467 15.111 5.925 14.545 5 13.918 4.075 13.313 4 12 4 12c0-2.458 1.48-4.52 3.515-5.594"></path></svg>
+            Network
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Tool 7: MAC Vendor Lookup -->
+            <div id="tool-mac-vendor" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-blue-500" onclick="openModal('mac-vendor-lookup')">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2a3 3 0 00-3 3v2m8-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">MAC Vendor Lookup</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Identify the manufacturer (OUI) and possible model.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tool 1: MAC Address Formatter -->
+            <div id="tool-mac-formatter" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-indigo-500" onclick="openModal('mac-formatter')">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">MAC Address Formatter</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Clean up and format MAC addresses (batch supported).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool 2: VUBnet Tester (Commented out) 
+            <div id="tool-vubnet-tester" class="tool-card bg-gray-200 dark:bg-gray-600 p-6 rounded-xl shadow-md transition duration-300 border-t-4 border-gray-400 opacity-60 pointer-events-none">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5l7 7-7 7"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-600 dark:text-gray-300">VUBnet Tester (Deactivated)</h2>
+                        <p class="text-sm text-gray-400 dark:text-gray-500">Temporarily disabled for maintenance.</p>
+                    </div>
+                </div>
+            </div>
+            -->
+            
+            <!-- Tool 5: IP Range Scanner (Commented out) 
+            <div id="tool-ip-scanner" class="tool-card bg-gray-200 dark:bg-gray-600 p-6 rounded-xl shadow-md transition duration-300 border-t-4 border-gray-400 opacity-60 pointer-events-none">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 0a2 2 0 100 4 2 2 0 000-4zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-600 dark:text-gray-300">IP Range Scanner (Deactivated)</h2>
+                        <p class="text-sm text-gray-400 dark:text-gray-500">Temporarily disabled for maintenance.</p>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+
         <!-- Category: Data Utilities -->
-        <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-gray-200 pb-2 mb-6 mt-10 flex items-center">
-            <svg class="w-6 h-6 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-200 border-b-2 border-gray-200 dark:border-gray-700 pb-2 mb-6 mt-10 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             Data Utilities
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Tool 6: CSV/JSON Converter -->
-            <div id="tool-csv-converter" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-orange-500" onclick="openModal('csv-converter')">
+            <div id="tool-csv-converter" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-green-500" onclick="openModal('csv-converter')">
                 <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-800">CSV/JSON Converter</h2>
-                        <p class="text-sm text-gray-500">Convert spreadsheet (CSV) data to structured JSON.</p>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">CSV/JSON Converter</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Convert spreadsheet (CSV) data to structured JSON.</p>
                     </div>
                 </div>
             </div>
@@ -126,36 +218,18 @@
 
 
         <!-- Category: Audio/Acoustic Tools -->
-        <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-gray-200 pb-2 mb-6 mt-10 flex items-center">
+        <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-200 border-b-2 border-gray-200 dark:border-gray-700 pb-2 mb-6 mt-10 flex items-center">
             <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H5a2 2 0 01-2-2V9a2 2 0 012-2h.586l.67-.67A2 2 0 018.172 6H12a2 2 0 012 2v8a2 2 0 01-2 2h-3.828a2 2 0 01-1.414-.586L5.586 15z"></path></svg>
             Audio
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Tool 3: Soundwave Calculator -->
-            <div id="tool-soundwave-calc" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-red-500" onclick="openModal('soundwave-calc')">
+            <div id="tool-soundwave-calc" class="tool-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-red-500" onclick="openModal('soundwave-calc')">
                 <div class="flex items-center space-x-4">
                     <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m3-3h.01M17 17v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2v6m4 0h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-800">Soundwave Calculator</h2>
-                        <p class="text-sm text-gray-500">Calculate sound speed and distance based on air temperature.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Category: Campus & Room Information -->
-        <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-gray-200 pb-2 mb-6 mt-10 flex items-center">
-            <svg class="w-6 h-6 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-2M5 21h2M12 21V9"></path></svg>
-            Campus
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Tool 4: Room Info Lookup -->
-            <div id="tool-room-info" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-yellow-500" onclick="openModal('room-info')">
-                <div class="flex items-center space-x-4">
-                    <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">Room Info Lookup</h2>
-                        <p class="text-sm text-gray-500">Quickly find capacity and facilities for VUB rooms.</p>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Soundwave Calculator</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Calculate sound speed and distance based on air temperature.</p>
                     </div>
                 </div>
             </div>
@@ -171,16 +245,16 @@
         <div class="fixed inset-0" onclick="closeModal()"></div>
 
         <!-- Modal Content Container -->
-        <div class="modal-content bg-white rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-4xl transform scale-95 transition-transform duration-300 relative">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-4xl transform scale-95 transition-transform duration-300 relative transition-colors duration-300">
             
             <!-- Close Button -->
-            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition" onclick="closeModal()">
+            <button class="absolute top-4 right-4 text-gray-500 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition" onclick="closeModal()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
             <!-- Modal Title -->
-            <h3 id="modal-title" class="text-2xl font-bold mb-4 text-[#3a4e9b]"></h3>
-            <div id="modal-content">
+            <h3 id="modal-title" class="text-2xl font-bold mb-4 text-vub-orange"></h3>
+            <div id="modal-content" class="text-gray-800 dark:text-gray-200">
                 <!-- Content will be injected here by JavaScript -->
             </div>
 
@@ -193,8 +267,54 @@
         const modal = document.getElementById('tool-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalContent = document.getElementById('modal-content');
+        const htmlElement = document.documentElement;
+        
+        // --- Dark Mode Logic ---
+        function setDarkMode(isDark) {
+            const moonIcon = document.getElementById('moon-icon');
+            const sunIcon = document.getElementById('sun-icon');
 
-        // --- Mock Data for Room Info ---
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                if (moonIcon && sunIcon) {
+                    moonIcon.classList.add('hidden');
+                    sunIcon.classList.remove('hidden');
+                }
+            } else {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                if (moonIcon && sunIcon) {
+                    moonIcon.classList.remove('hidden');
+                    sunIcon.classList.add('hidden');
+                }
+            }
+        }
+
+        // Initialize Dark Mode on load
+        window.onload = function() {
+            // Check for saved preference, default to system preference if none
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                setDarkMode(true);
+            } else {
+                setDarkMode(false);
+            }
+
+            // Set up toggle listener
+            const toggleButton = document.getElementById('dark-mode-toggle');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    setDarkMode(!htmlElement.classList.contains('dark'));
+                });
+            }
+        };
+
+        // --- Tool Data ---
+
+        // Tool 4: Room Info Lookup Data
         const roomData = [
             { id: 'velkeniers', name: 'Auditorium Velkeniers', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
             { id: 'q5', name: 'Q.0.5', campus: 'Etterbeek', capacity: 80, facilities: ['Projector', 'Whiteboard', 'Basic Audio'] },
@@ -203,8 +323,26 @@
             { id: 'r210', name: 'R.2.10 (Meeting)', campus: 'Etterbeek', capacity: 12, facilities: ['TV Display', 'Small VC System'] },
         ];
         
-        // --- MAC Vendor Lookup Data (OUI Prefixes) ---
-        // Key is the 6-digit OUI (Organizationally Unique Identifier)
+        // Tool 8: Manual Lookup Data
+        const manualData = [
+            { manufacturer: 'Matrox', model: 'Maevex 6020 Remote Recorder', link: 'https://ftp.matrox.com/pub/mga/archive/Maevex/2020/Jun-2020/Matrox%20Maevex%206020%20Remote%20Recorder%20User%20Guide.pdf' },
+            { manufacturer: 'Shure', model: 'MXA910 (Ceiling Mic)', link: 'https://www.shure.com/en-US/support/downloads/MXA910/user_guide' },
+            { manufacturer: 'Extron', model: 'DTP CrossPoint 84', link: 'https://www.extron.com/product/dtpcrosspoint84' },
+            { manufacturer: 'Crestron', model: 'DM-MD16x16', link: 'https://www.crestron.com/Products/Control-Hardware-Software/Switchers/DigitalMedia-Switchers/DM-MD16X16' },
+            { manufacturer: 'Dell', model: 'P2419H Monitor', link: 'https://dl.dell.com/manuals/all-products/esuprt_display_projector/esuprt_display/dell-p2419h-monitor_user%27s-guide_en-us.pdf' },
+            { manufacturer: 'Samsung', model: 'QM85R Display', link: 'https://downloadcenter.samsung.com/content/UM/202008/20200827110134015/BN46-00898A-02_Manual_English.pdf' },
+            { manufacturer: 'Cisco', model: 'Room Kit Mini', link: 'https://www.cisco.com/c/en/us/td/docs/telepresence/endpoint/room-kit/room-kit-mini/ce-deployment-guide-room-kit-mini.html' },
+        ];
+
+        // Tool 9: VUB IP Reference Data (New Tool)
+        const vubIpData = [
+            { type: 'DNS Server', name: 'VUB DNS 1 (Primary)', ip: '134.184.122.1', description: 'Primary VUB internal DNS resolver.' },
+            { type: 'DNS Server', name: 'VUB DNS 2 (Secondary)', ip: '134.184.123.1', description: 'Secondary VUB internal DNS resolver.' },
+            { type: 'Loopback', name: 'Localhost', ip: '127.0.0.1', description: 'Standard loopback address for local testing (All devices).' },
+            { type: 'Public Test', name: 'Google DNS', ip: '8.8.8.8', description: 'External public DNS for connectivity tests.' },
+        ];
+
+        // Tool 7: MAC Vendor Lookup Data (OUI Prefixes)
         const macVendorData = {
             'C44268': { vendor: 'Crestron Electronics, Inc.', model: 'Crestron AV Control/Switching Gear (Standard VUB)' },
             '908D6E': { vendor: 'Dell Inc.', model: 'Common Dell PC/Laptop' },
@@ -231,42 +369,37 @@
             if (toolId === 'mac-formatter') {
                 modalTitle.textContent = 'MAC Address Formatter';
                 modalContent.innerHTML = macFormatterTemplate;
-                // Add default placeholder text for immediate formatting
                 document.getElementById('mac-input').value = 'C44268DDEEFF\n1234.5678.90AB\n0C-0D-0E-0F-10-11\n';
                 formatMac(); 
             } else if (toolId === 'mac-vendor-lookup') {
                 modalTitle.textContent = 'MAC Vendor Lookup';
                 modalContent.innerHTML = macVendorLookupTemplate;
-                // Set default example and run lookup immediately
                 document.getElementById('mac-vendor-input').value = 'A4:30:7A:11:22:33';
                 lookupMacVendor();
-            } else if (toolId === 'vubnet-tester') {
-                modalTitle.textContent = 'VUBnet Tester (Simulated)';
-                modalContent.innerHTML = vubnetTesterTemplate('172.25.117.254');
             } else if (toolId === 'soundwave-calc') {
                 modalTitle.textContent = 'Soundwave Speed & Distance Calculator';
                 modalContent.innerHTML = soundwaveCalcTemplate;
-                calculateSoundwave(); // Initial call to show defaults
+                calculateSoundwave();
             } else if (toolId === 'room-info') {
                 modalTitle.textContent = 'VUB Room Information Lookup';
                 modalContent.innerHTML = roomInfoTemplate;
                 document.getElementById('room-search-input').focus();
-            } else if (toolId === 'ip-scanner') {
-                modalTitle.textContent = 'IP Range Scanner (Simulated)';
-                modalContent.innerHTML = ipScannerTemplate;
-                // Set default scan values
-                document.getElementById('ip-start-input').value = '192.168.1.1';
-                document.getElementById('ip-end-input').value = '192.168.1.10';
             } else if (toolId === 'csv-converter') {
                 modalTitle.textContent = 'CSV to JSON Converter';
                 modalContent.innerHTML = csvConverterTemplate;
-                // Set default CSV example
                 document.getElementById('csv-input').value = 
                     'RoomID,SystemType,IP,MacAddress\n' + 
                     'Q.0.5,Extron Switcher,172.25.117.10,00:0C:C7:11:AA:BB\n' + 
                     'B.1.0,Shure Mic DSP,172.25.117.11,00:0E:C6:22:CC:DD';
-                // Trigger conversion on load with default example
                 convertCsvToJson();
+            } else if (toolId === 'manual-lookup') {
+                modalTitle.textContent = 'Device Manual Lookup';
+                modalContent.innerHTML = manualLookupTemplate;
+                document.getElementById('manual-search-input').value = 'Matrox';
+                searchManuals();
+            } else if (toolId === 'ip-reference') {
+                 modalTitle.textContent = 'VUB IP Reference List';
+                 modalContent.innerHTML = ipReferenceTemplate;
             }
         }
 
@@ -283,28 +416,103 @@
             }
         });
 
+        // --- Tool 9: VUB IP Reference Template and Logic ---
+        const ipReferenceTemplate = `
+            <div class="space-y-6">
+                <p class="text-gray-600 dark:text-gray-400">A quick-access list for frequently used or essential IP addresses for VUB systems and common networking. Click on any IP to copy it.</p>
+
+                <div id="ip-list-container" class="space-y-4">
+                    ${vubIpData.map(item => `
+                        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm border-l-4 border-vub-dark-orange">
+                            <div class="flex-1 pr-4">
+                                <h5 class="text-lg font-bold text-gray-800 dark:text-gray-100">${item.name}</h5>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">${item.description}</p>
+                            </div>
+                            <code class="text-xl font-mono text-vub-orange dark:text-vub-orange bg-white dark:bg-gray-800 p-2 rounded-md font-extrabold cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition mt-2 sm:mt-0" 
+                                  onclick="copyToClipboardValue('${item.ip}', this)">
+                                ${item.ip}
+                            </code>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+
+        // --- Tool 8: Manual Lookup Logic and Template ---
+        const manualLookupTemplate = `
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">Search for equipment manuals by manufacturer or model name.</p>
+                <input type="text" id="manual-search-input" oninput="searchManuals()" placeholder="e.g., Matrox or MXA910"
+                       class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-vub-orange focus:border-vub-orange">
+
+                <div id="manual-results-container" class="space-y-3 max-h-80 overflow-y-auto p-2">
+                    <!-- Results will be injected here -->
+                </div>
+            </div>
+        `;
+
+        function searchManuals() {
+            const inputElement = document.getElementById('manual-search-input');
+            const resultsContainer = document.getElementById('manual-results-container');
+            const query = inputElement.value.toLowerCase().trim();
+            
+            resultsContainer.innerHTML = '';
+
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Keep typing (min 2 characters) to search manuals.</p>';
+                return;
+            }
+
+            const filteredManuals = manualData.filter(manual => 
+                manual.manufacturer.toLowerCase().includes(query) || 
+                manual.model.toLowerCase().includes(query)
+            );
+
+            if (filteredManuals.length === 0) {
+                resultsContainer.innerHTML = '<p class="text-center text-red-500 font-medium">No manuals found matching your query.</p>';
+                return;
+            }
+
+            filteredManuals.forEach(manual => {
+                const manualCard = `
+                    <div class="bg-gray-50 dark:bg-gray-700 border border-vub-orange rounded-lg p-4 shadow-md transition-colors duration-300">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">${manual.manufacturer.toUpperCase()}</p>
+                        <h5 class="text-xl font-bold text-gray-800 dark:text-gray-100">${manual.model}</h5>
+                        <a href="${manual.link}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center mt-2 text-vub-orange hover:text-vub-dark-orange transition font-semibold text-sm">
+                            View Manual Link
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                `;
+                resultsContainer.innerHTML += manualCard;
+            });
+        }
+
+
         // --- Tool 7: MAC Vendor Lookup Logic and Template ---
         const macVendorLookupTemplate = `
             <div class="space-y-4">
-                <p class="text-gray-600">Enter a full MAC address or just the 6-digit OUI prefix to look up the manufacturer and possible model.</p>
+                <p class="text-gray-600 dark:text-gray-400">Enter a full MAC address or just the 6-digit OUI prefix to look up the manufacturer and possible model.</p>
                 
                 <input type="text" id="mac-vendor-input" oninput="lookupMacVendor()" placeholder="e.g., A4:30:7A:11:22:33 or C44268"
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-base tracking-wider uppercase">
+                       class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-base tracking-wider uppercase">
 
-                <div id="vendor-output-area" class="bg-blue-50 border border-blue-300 rounded-lg p-5 shadow-inner min-h-[10rem]">
-                    <h4 class="text-xl font-bold text-blue-800 mb-3" id="vendor-title">Awaiting Input...</h4>
-                    <p class="text-sm text-gray-700 mb-2">OUI/Prefix Used: <code id="oui-output" class="text-blue-900 font-bold">--</code></p>
+                <div id="vendor-output-area" class="bg-blue-50 dark:bg-blue-900 border border-blue-300 dark:border-blue-700 rounded-lg p-5 shadow-inner min-h-[10rem] transition-colors duration-300">
+                    <h4 class="text-xl font-bold text-blue-800 dark:text-blue-200 mb-3" id="vendor-title">Awaiting Input...</h4>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">OUI/Prefix Used: <code id="oui-output" class="text-blue-900 dark:text-blue-400 font-bold">--</code></p>
                     
                     <div id="vendor-details" class="space-y-3">
                         <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-2M5 21h2M12 21V9"></path></svg>
-                            <p class="text-md text-gray-700 font-semibold">Manufacturer:</p>
-                            <p id="manufacturer-output" class="text-md font-mono text-gray-900">--</p>
+                            <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-2M5 21h2M12 21V9"></path></svg>
+                            <p class="text-md text-gray-700 dark:text-gray-300 font-semibold">Manufacturer:</p>
+                            <p id="manufacturer-output" class="text-md font-mono text-gray-900 dark:text-gray-100">--</p>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                            <p class="text-md text-gray-700 font-semibold">VUB Model/Context:</p>
-                            <p id="model-output" class="text-md font-mono text-gray-900">--</p>
+                            <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <p class="text-md text-gray-700 dark:text-gray-300 font-semibold">VUB Model/Context:</p>
+                            <p id="model-output" class="text-md font-mono text-gray-900 dark:text-gray-100">--</p>
                         </div>
                     </div>
                 </div>
@@ -332,6 +540,8 @@
                 vendorTitle.textContent = 'Awaiting Input...';
                 manufacturerOutput.textContent = 'Input must contain at least 6 hexadecimal characters.';
                 modelOutput.textContent = '--';
+                vendorTitle.classList.add('text-blue-800', 'dark:text-blue-200');
+                vendorTitle.classList.remove('text-red-600');
                 return;
             }
 
@@ -342,13 +552,13 @@
                 // Match Found
                 vendorTitle.textContent = 'Vendor Found!';
                 vendorTitle.classList.remove('text-red-600');
-                vendorTitle.classList.add('text-blue-800');
+                vendorTitle.classList.add('text-blue-800', 'dark:text-blue-200');
                 manufacturerOutput.textContent = match.vendor;
                 modelOutput.textContent = match.model;
             } else {
                 // No Match
                 vendorTitle.textContent = 'No Match Found';
-                vendorTitle.classList.remove('text-blue-800');
+                vendorTitle.classList.remove('text-blue-800', 'dark:text-blue-200');
                 vendorTitle.classList.add('text-red-600');
                 manufacturerOutput.textContent = 'The OUI prefix is not recognized in our database.';
                 modelOutput.textContent = 'This may be a new or uncommon device. Check the full MAC address for verification.';
@@ -359,24 +569,24 @@
         // --- Tool 1: MAC Address Formatter Logic and Template ---
         const macFormatterTemplate = `
             <div class="space-y-4">
-                <p class="text-gray-600">Enter multiple raw MAC addresses below (separated by new lines, spaces, or commas).</p>
+                <p class="text-gray-600 dark:text-gray-400">Enter multiple raw MAC addresses below (separated by new lines, spaces, or commas).</p>
                 <textarea id="mac-input" oninput="formatMac()" rows="5" placeholder="Example:\nAABBCCDDEEFF\n1234.5678.90AB\n0C-0D-0E-0F-10-11"
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 tracking-wider text-sm font-mono"></textarea>
+                       class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 tracking-wider text-sm font-mono"></textarea>
 
                 <!-- Formatting Options -->
-                <div class="flex flex-col sm:flex-row gap-4 bg-gray-50 p-4 rounded-lg border">
+                <div class="flex flex-col sm:flex-row gap-4 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border dark:border-gray-700">
                     <!-- Case Control -->
                     <div class="flex-1">
-                        <label for="mac-case" class="block text-sm font-medium text-gray-700 mb-1">Case:</label>
-                        <select id="mac-case" onchange="formatMac()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <label for="mac-case" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Case:</label>
+                        <select id="mac-case" onchange="formatMac()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="upper">UPPERCASE (AA:BB:CC...)</option>
                             <option value="lower">lowercase (aa:bb:cc...)</option>
                         </select>
                     </div>
                     <!-- Separator Control -->
                     <div class="flex-1">
-                        <label for="mac-separator" class="block text-sm font-medium text-gray-700 mb-1">Separator:</label>
-                        <select id="mac-separator" onchange="formatMac()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <label for="mac-separator" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Separator:</label>
+                        <select id="mac-separator" onchange="formatMac()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                             <option value=":">Colon (AA:BB:CC)</option>
                             <option value="-">Hyphen (AA-BB-CC)</option>
                             <option value="">None (AABBCC)</option>
@@ -384,9 +594,9 @@
                     </div>
                 </div>
 
-                <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
-                    <p class="text-sm font-medium text-gray-500 mb-1">Formatted Output:</p>
-                    <pre id="mac-output" class="block text-sm font-mono text-gray-800 whitespace-pre-wrap min-h-[3rem]"></pre>
+                <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-inner border dark:border-gray-700">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Formatted Output:</p>
+                    <pre id="mac-output" class="block text-sm font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap min-h-[3rem]"></pre>
                 </div>
                 <button onclick="copyToClipboard('mac-output', true, 'mac-copy-btn')" class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-semibold disabled:opacity-50" id="mac-copy-btn">
                     Copy All to Clipboard
@@ -445,317 +655,177 @@
         }
 
 
-        // --- Tool 2: VUBnet Tester Logic and Template (Simulated) ---
-        const vubnetTesterTemplate = (defaultIp) => `
+        // --- Tool 3: Soundwave Calculator Logic and Template ---
+        const soundwaveCalcTemplate = `
             <div class="space-y-4">
-                <p class="text-gray-600">Enter the IP address or hostname you wish to test connectivity to (Simulation only). E.g., ${defaultIp}</p>
-                <div class="flex space-x-3">
-                    <input type="text" id="ping-input" value="${defaultIp}" placeholder="e.g., 172.25.117.254"
-                           class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 font-mono">
-                    <button onclick="startPing()" id="ping-button" class="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition font-semibold flex-shrink-0">
-                        Test Ping
-                    </button>
-                </div>
-                <div class="bg-gray-800 p-4 rounded-lg shadow-inner text-white">
-                    <p class="text-sm font-medium text-green-400 mb-2">Simulated Ping Output:</p>
-                    <pre id="ping-output" class="block text-xs md:text-sm font-mono whitespace-pre-wrap min-h-[8rem]">Click 'Test Ping' to run the simulation against the address.</pre>
-                    <div id="ping-loading" class="hidden flex items-center justify-center text-green-500 mt-2">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Pinging...
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        <label for="temperature" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Temperature (T) in Celsius:</label>
+                        <input type="number" id="temperature" value="20" oninput="calculateSoundwave()"
+                               class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-red-500 focus:border-red-500 font-mono">
                     </div>
+                    <div class="flex-1">
+                        <label for="time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Time (t) in seconds (One-Way):</label>
+                        <input type="number" id="time" value="0.01" oninput="calculateSoundwave()"
+                               class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-red-500 focus:border-red-500 font-mono">
+                    </div>
+                </div>
+
+                <div class="bg-red-50 dark:bg-red-900/50 p-4 rounded-lg shadow-inner space-y-2 border border-red-200 dark:border-red-700 transition-colors duration-300">
+                    <h4 class="font-semibold text-red-700 dark:text-red-300">Results:</h4>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">Speed of Sound: <code id="speed-output" class="font-mono font-bold text-lg text-red-900 dark:text-red-100"></code> m/s</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">Calculated Distance (d = v \\times t): <code id="distance-output" class="font-mono font-bold text-lg text-red-900 dark:text-red-100"></code> meters</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 pt-2">Formula: $$v = 331.3 + 0.606T$$</p>
+                </div>
+                <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-sm text-gray-600 dark:text-gray-300 border dark:border-gray-600">
+                    <label for="distance-reverse" class="block font-medium mb-1">Reverse Calculation: Enter Distance (m):</label>
+                    <div class="flex space-x-2">
+                        <input type="number" id="distance-reverse" placeholder="Distance (m)" oninput="calculateSoundwaveReverse()"
+                               class="flex-grow p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg font-mono">
+                        <button onclick="calculateSoundwaveReverse()" class="bg-red-400 text-white p-2 rounded-lg hover:bg-red-500 transition font-medium">Calculate Time</button>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Calculated Time (t = d / v): <code id="time-reverse-output" class="font-mono font-bold text-red-900 dark:text-red-100">--</code> seconds</p>
                 </div>
             </div>
         `;
 
-        async function pingVubNet(ip) {
-            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)); 
-            const success = Math.random() > 0.3; 
-            const target = ip.trim();
+        function calculateSoundwave() {
+            const tempInput = document.getElementById('temperature');
+            const timeInput = document.getElementById('time');
+            const speedOutput = document.getElementById('speed-output');
+            const distanceOutput = document.getElementById('distance-output');
 
-            if (success) {
-                const packets = [];
-                for (let i = 0; i < 4; i++) {
-                    packets.push(`Reply from ${target}: bytes=32 time=${(Math.random() * 4 + 1).toFixed(2)}ms TTL=64`);
-                }
-                const packetsString = packets.join('\n');
-                return `Pinging ${target} with 32 bytes of data:\n\n${packetsString}\n\nPing statistics for ${target}:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 1ms, Maximum = 5ms, Average = ${(Math.random() * 4 + 1).toFixed(2)}ms`;
-            } else {
-                const packets = [];
-                let received = 0;
-                for (let i = 0; i < 4; i++) {
-                    if (Math.random() > 0.6) {
-                        packets.push(`Reply from ${target}: bytes=32 time=${(Math.random() * 4 + 1).toFixed(2)}ms TTL=64`);
-                        received++;
-                    } else {
-                        packets.push(`Request timed out.`);
-                    }
-                }
-                const lost = 4 - received;
-                const packetsString = packets.join('\n');
-                return `Pinging ${target} with 32 bytes of data:\n\n${packetsString}\n\nPing statistics for ${target}:\n    Packets: Sent = 4, Received = ${received}, Lost = ${lost} (${(lost/4 * 100).toFixed(0)}% loss),\nApproximate round trip times in milli-seconds:\n    Request timed out or high latency observed.`;
-            }
+            const T = parseFloat(tempInput.value) || 0;
+            const t = parseFloat(timeInput.value) || 0;
+
+            // Speed of sound formula: v = 331.3 + 0.606 * T
+            const v = 331.3 + (0.606 * T);
+            
+            // Distance formula: d = v * t
+            const d = v * t;
+
+            speedOutput.textContent = v.toFixed(3);
+            distanceOutput.textContent = d.toFixed(3);
+
+            // Also update the reverse calculation if it has input
+            calculateSoundwaveReverse(v);
         }
-
-        async function startPing() {
-            const ipInput = document.getElementById('ping-input');
-            const outputPre = document.getElementById('ping-output');
-            const button = document.getElementById('ping-button');
-            const loading = document.getElementById('ping-loading');
-
-            const ip = ipInput.value.trim();
-
-            if (!ip) {
-                outputPre.textContent = "Error: Please enter a valid IP address or hostname.";
-                return;
-            }
-
-            button.disabled = true;
-            ipInput.disabled = true;
-            outputPre.textContent = 'Initiating ping sequence...';
-            loading.classList.remove('hidden');
-
-            try {
-                const result = await pingVubNet(ip);
-                outputPre.textContent = result;
-                outputPre.style.color = 'white';
-            } catch (error) {
-                outputPre.textContent = `Error during simulation: ${error.message}`;
-                outputPre.style.color = '#f87171';
-            } finally {
-                button.disabled = false;
-                ipInput.disabled = false;
-                loading.classList.add('hidden');
-            }
-        }
-
-
-        // --- Tool 5: IP Range Scanner Logic and Template (Simulated) ---
-        const ipScannerTemplate = `
-            <div class="space-y-4">
-                <p class="text-gray-600">Enter the starting and ending IP addresses for the simulated scan.</p>
-                
-                <div class="flex flex-col md:flex-row gap-3">
-                    <div class="flex-1">
-                        <label for="ip-start-input" class="block text-sm font-medium text-gray-700">Start IP Address (e.g., 192.168.1.1)</label>
-                        <input type="text" id="ip-start-input" placeholder="192.168.1.1"
-                               class="w-full p-2 border border-gray-300 rounded-lg font-mono focus:ring-purple-500 focus:border-purple-500">
-                    </div>
-                    <div class="flex-1">
-                        <label for="ip-end-input" class="block text-sm font-medium text-gray-700">End IP Address (e.g., 192.168.1.10)</label>
-                        <input type="text" id="ip-end-input" placeholder="192.168.1.10"
-                               class="w-full p-2 border border-gray-300 rounded-lg font-mono focus:ring-purple-500 focus:border-purple-500">
-                    </div>
-                </div>
-                
-                <button onclick="startIpScan()" id="ip-scan-button" class="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition font-semibold">
-                    Start Simulated Scan
-                </button>
-
-                <div class="mt-6">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Scan Results:</h4>
-                    <div id="scan-output-area" class="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-96 overflow-y-auto space-y-2">
-                        <p class="text-gray-500 text-center" id="scan-status">Awaiting scan input. Recommended range is small (e.g., 1-10).</p>
-                        <!-- Results will be injected here -->
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2" id="scan-summary"></p>
-                </div>
-            </div>
-        `;
         
-        // Regex to validate IPv4 format (basic check)
-        const IP_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-
-        // Helper function to convert IP string to an integer for easy iteration/comparison
-        function ipToInt(ip) {
-            return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
-        }
-
-        // Helper function to convert integer back to IP string
-        function intToIp(int) {
-            return [
-                (int >> 24) & 0xFF,
-                (int >> 16) & 0xFF,
-                (int >> 8) & 0xFF,
-                int & 0xFF
-            ].join('.');
-        }
-
-        // Helper function to generate a random MAC address
-        function generateRandomMac() {
-            const hex = '0123456789ABCDEF';
-            let mac = '';
-            for (let i = 0; i < 12; i++) {
-                mac += hex[Math.floor(Math.random() * 16)];
-            }
-            // Format to AA:BB:CC:DD:EE:FF
-            return mac.match(/.{1,2}/g).join(':');
-        }
-
-        // Helper function to generate a random hostname prefix
-        function getRandomHostPrefix() {
-            const prefixes = ['AV-CTRL', 'VUB-WAP', 'VUB-PRJ', 'VUB-NVR', 'VUB-IPCAM', 'AV-DISP'];
-            return prefixes[Math.floor(Math.random() * prefixes.length)];
-        }
-
-        // Simulates the scanning process for a single IP
-        function simulateScan(ip) {
-            // Randomly decide if the host is up (approx. 40% chance)
-            const isUp = Math.random() < 0.4; 
+        function calculateSoundwaveReverse(currentSpeed = null) {
+            const tempInput = document.getElementById('temperature');
+            const distReverseInput = document.getElementById('distance-reverse');
+            const timeReverseOutput = document.getElementById('time-reverse-output');
             
-            if (isUp) {
-                const lastOctet = ip.split('.').pop();
-                return {
-                    ip: ip,
-                    status: 'Up',
-                    hostname: `${getRandomHostPrefix()}-${lastOctet.padStart(3, '0')}`,
-                    macAddress: generateRandomMac(),
-                    latency: (Math.random() * 50 + 10).toFixed(2) + 'ms'
-                };
-            } else {
-                return {
-                    ip: ip,
-                    status: 'Down',
-                };
+            if (!distReverseInput || !timeReverseOutput) return;
+
+            const T = parseFloat(tempInput.value) || 0;
+            const d = parseFloat(distReverseInput.value);
+            
+            if (isNaN(d) || d <= 0) {
+                timeReverseOutput.textContent = '--';
+                return;
             }
+
+            // Calculate speed if not provided (avoids dependency on the main calculation path)
+            const v = currentSpeed !== null ? currentSpeed : (331.3 + (0.606 * T));
+
+            // Time formula: t = d / v
+            const t = d / v;
+            
+            timeReverseOutput.textContent = t.toFixed(6);
         }
 
-        async function startIpScan() {
-            const startInput = document.getElementById('ip-start-input');
-            const endInput = document.getElementById('ip-end-input');
-            const scanButton = document.getElementById('ip-scan-button');
-            const outputArea = document.getElementById('scan-output-area');
-            const scanStatus = document.getElementById('scan-status');
-            const scanSummary = document.getElementById('scan-summary');
 
-            const startIp = startInput.value.trim();
-            const endIp = endInput.value.trim();
+        // --- Tool 4: Room Info Lookup Logic and Template ---
+        const roomInfoTemplate = `
+            <div class="space-y-4">
+                <p class="text-gray-600 dark:text-gray-400">Search for VUB room/auditorium information by name or partial ID.</p>
+                <input type="text" id="room-search-input" oninput="searchRoomInfo()" placeholder="e.g., Velkeniers or Q.0.5"
+                       class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-vub-orange focus:border-vub-orange">
+                <div id="room-results-container" class="space-y-3 max-h-80 overflow-y-auto p-2">
+                    <p class="text-center text-gray-500 dark:text-gray-400">Start typing to search rooms.</p>
+                </div>
+            </div>
+        `;
+
+        function searchRoomInfo() {
+            const inputElement = document.getElementById('room-search-input');
+            const resultsContainer = document.getElementById('room-results-container');
+            const query = inputElement.value.toLowerCase().trim();
             
-            // 1. Validation
-            if (!IP_REGEX.test(startIp) || !IP_REGEX.test(endIp)) {
-                scanStatus.textContent = 'Error: Please enter two valid IPv4 addresses (e.g., 192.168.1.1).';
+            resultsContainer.innerHTML = '';
+
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Keep typing (min 2 characters) to search rooms.</p>';
                 return;
             }
 
-            const startInt = ipToInt(startIp);
-            const endInt = ipToInt(endIp);
+            const filteredRooms = roomData.filter(room => 
+                room.name.toLowerCase().includes(query) || 
+                room.id.toLowerCase().includes(query) ||
+                room.campus.toLowerCase().includes(query)
+            );
 
-            if (startInt >= endInt) {
-                scanStatus.textContent = 'Error: Start IP must be lower than End IP.';
-                return;
-            }
-            
-            const totalIps = endInt - startInt + 1;
-            const MAX_IPS = 100;
-
-            if (totalIps > MAX_IPS) {
-                scanStatus.textContent = `Error: The range is too large (${totalIps} IPs). Maximum simulated scan size is ${MAX_IPS} IPs.`;
+            if (filteredRooms.length === 0) {
+                resultsContainer.innerHTML = '<p class="text-center text-red-500 font-medium">No rooms found matching your query.</p>';
                 return;
             }
 
-            // Check if the first three octets match (only scanning within the same subnet is supported for this sim)
-            const startPrefix = startIp.split('.').slice(0, 3).join('.');
-            const endPrefix = endIp.split('.').slice(0, 3).join('.');
+            filteredRooms.forEach(room => {
+                const facilitiesHtml = room.facilities.map(f => `<span class="inline-block bg-vub-orange/30 text-vub-dark-orange text-xs px-2 py-0.5 rounded-full dark:bg-vub-orange/50 dark:text-gray-900">${f}</span>`).join(' ');
 
-            if (startPrefix !== endPrefix) {
-                scanStatus.textContent = 'Error: For simplicity, please enter IPs within the same C-class subnet (first three octets must match).';
-                return;
-            }
-
-
-            // 2. Setup
-            scanButton.disabled = true;
-            outputArea.innerHTML = '';
-            scanStatus.textContent = `Scanning range ${startIp} to ${endIp}...`;
-            scanSummary.textContent = 'Scan in progress...';
-            let devicesUp = 0;
-            const startTime = Date.now();
-
-            // 3. Scan Loop (Simulated)
-            for (let currentInt = startInt; currentInt <= endInt; currentInt++) {
-                const ip = intToIp(currentInt);
-                
-                const result = await new Promise(resolve => {
-                    // Simulate network latency (20ms to 200ms per IP)
-                    const delay = Math.random() * 180 + 20;
-                    setTimeout(() => resolve(simulateScan(ip)), delay);
-                });
-
-                let statusClass = result.status === 'Up' ? 'bg-green-100 border-green-400' : 'bg-gray-100 border-gray-300';
-                let statusText = result.status === 'Up' ? 'UP' : 'DOWN';
-                let detailHtml = '';
-                
-                if (result.status === 'Up') {
-                    devicesUp++;
-                    detailHtml = `
-                        <div class="flex justify-between text-xs text-gray-700 mt-1">
-                            <span>Host: <code class="font-bold text-green-700">${result.hostname}</code></span>
-                            <span>MAC: <code class="font-mono text-purple-700">${result.macAddress}</code></span>
-                            <span>Latency: ${result.latency}</span>
+                const roomCard = `
+                    <div class="bg-white dark:bg-gray-700 border border-vub-orange/50 rounded-lg p-4 shadow-md transition-colors duration-300">
+                        <h5 class="text-xl font-bold text-vub-dark-orange dark:text-vub-orange">${room.name}</h5>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">ID: ${room.id.toUpperCase()}</p>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <p><span class="font-semibold text-gray-700 dark:text-gray-300">Campus:</span> ${room.campus}</p>
+                            <p><span class="font-semibold text-gray-700 dark:text-gray-300">Capacity:</span> <span class="text-lg font-mono text-vub-dark-orange dark:text-vub-orange">${room.capacity}</span></p>
                         </div>
-                    `;
-                } else {
-                    detailHtml = '<span class="text-xs text-red-500">Host did not respond to simulated probe.</span>';
-                }
-
-                const itemHtml = `
-                    <div class="${statusClass} p-3 rounded-lg border">
-                        <div class="flex justify-between items-center font-bold">
-                            <span class="font-mono text-lg">${result.ip}</span>
-                            <span class="text-sm px-2 py-0.5 rounded-full ${result.status === 'Up' ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'}">${statusText}</span>
+                        <div class="mt-3">
+                            <p class="font-semibold text-gray-700 dark:text-gray-300 mb-1">Key Facilities:</p>
+                            <div class="flex flex-wrap gap-2">${facilitiesHtml}</div>
                         </div>
-                        ${detailHtml}
                     </div>
                 `;
-
-                // Add result to the top for easier viewing of latest results
-                outputArea.insertAdjacentHTML('afterbegin', itemHtml);
-            }
-
-            // 4. Final Summary
-            const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
-            scanStatus.textContent = 'Scan Complete.';
-            scanSummary.textContent = `Summary: ${devicesUp} devices found active out of ${totalIps} scanned in ${totalTime} seconds.`;
-            scanButton.disabled = false;
+                resultsContainer.innerHTML += roomCard;
+            });
         }
-
 
         // --- Tool 6: CSV to JSON Converter Logic and Template ---
         const csvConverterTemplate = `
             <div class="space-y-4">
-                <p class="text-gray-600">Paste your CSV data below. You can easily export this from Excel or any spreadsheet program.</p>
+                <p class="text-gray-600 dark:text-gray-400">Paste your CSV data below. You can easily export this from Excel or any spreadsheet program.</p>
                 <textarea id="csv-input" oninput="convertCsvToJson()" rows="6" placeholder="Example:\nRoomID,SystemType,IP\nQ.0.5,Extron Switcher,172.25.117.10"
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm font-mono"></textarea>
+                       class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm font-mono"></textarea>
 
                 <!-- Configuration Options -->
-                <div class="flex flex-col sm:flex-row gap-4 bg-gray-50 p-4 rounded-lg border">
+                <div class="flex flex-col sm:flex-row gap-4 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border dark:border-gray-700">
                     <!-- Delimiter -->
                     <div class="flex-1">
-                        <label for="csv-delimiter" class="block text-sm font-medium text-gray-700 mb-1">Delimiter:</label>
-                        <select id="csv-delimiter" onchange="convertCsvToJson()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
+                        <label for="csv-delimiter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Delimiter:</label>
+                        <select id="csv-delimiter" onchange="convertCsvToJson()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-green-500 focus:border-green-500">
                             <option value=",">Comma (,)</option>
                             <option value=";">Semicolon (;)</option>
-                            <option value="\t">Tab (\t)</option>
+                            <option value="\t">Tab (\\t)</option>
                             <option value="|">Pipe (|)</option>
                         </select>
                     </div>
                     <!-- Header Row -->
                     <div class="flex-1">
-                        <label for="csv-header" class="block text-sm font-medium text-gray-700 mb-1">First row is Header:</label>
-                        <select id="csv-header" onchange="convertCsvToJson()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
+                        <label for="csv-header" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First row is Header:</label>
+                        <select id="csv-header" onchange="convertCsvToJson()" class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-green-500 focus:border-green-500">
                             <option value="true">Yes, use as keys</option>
                             <option value="false">No, use generic keys (col1, col2...)</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="bg-orange-100 p-4 rounded-lg shadow-inner">
-                    <p class="text-sm font-medium text-orange-800 mb-1">JSON Output:</p>
-                    <pre id="json-output-area" class="block text-xs font-mono text-gray-800 whitespace-pre-wrap min-h-[10rem] max-h-80 overflow-y-auto bg-white p-2 rounded-md"></pre>
+                <div class="bg-green-100 dark:bg-green-900/50 p-4 rounded-lg shadow-inner border border-green-200 dark:border-green-700 transition-colors duration-300">
+                    <p class="text-sm font-medium text-green-800 dark:text-green-300 mb-1">JSON Output:</p>
+                    <pre id="json-output-area" class="block text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap min-h-[10rem] max-h-80 overflow-y-auto bg-white dark:bg-gray-800 p-2 rounded-md"></pre>
                 </div>
-                <button onclick="copyToClipboard('json-output-area', true, 'json-copy-btn')" class="w-full bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 transition font-semibold disabled:opacity-50" id="json-copy-btn">
+                <button onclick="copyToClipboard('json-output-area', true, 'json-copy-btn')" class="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition font-semibold disabled:opacity-50" id="json-copy-btn">
                     Copy JSON to Clipboard
                 </button>
             </div>
@@ -771,7 +841,7 @@
             if (!csvInput || !delimiterSelect || !headerSelect || !outputArea) return;
 
             const csvText = csvInput.value.trim();
-            const delimiter = delimiterSelect.value;
+            const delimiter = delimiterSelect.value === '\\t' ? '\t' : delimiterSelect.value;
             const hasHeader = headerSelect.value === 'true';
 
             outputArea.textContent = '';
@@ -840,146 +910,7 @@
         }
 
 
-        // --- Tool 3: Soundwave Calculator Logic and Template ---
-        const soundwaveCalcTemplate = `
-            <div class="space-y-4">
-                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                    <div class="flex-1">
-                        <label for="temperature" class="block text-sm font-medium text-gray-700">Temperature (T) in Celsius:</label>
-                        <input type="number" id="temperature" value="20" oninput="calculateSoundwave()"
-                               class="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 font-mono">
-                    </div>
-                    <div class="flex-1">
-                        <label for="time" class="block text-sm font-medium text-gray-700">Time (t) in seconds (One-Way):</label>
-                        <input type="number" id="time" value="0.01" oninput="calculateSoundwave()"
-                               class="w-full p-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 font-mono">
-                    </div>
-                </div>
-
-                <div class="bg-red-50 p-4 rounded-lg shadow-inner space-y-2">
-                    <h4 class="font-semibold text-red-700">Results:</h4>
-                    <p class="text-sm text-gray-700">Speed of Sound: <code id="speed-output" class="font-mono font-bold text-lg text-red-900"></code> m/s</p>
-                    <p class="text-sm text-gray-700">Calculated Distance (d = v \\times t): <code id="distance-output" class="font-mono font-bold text-lg text-red-900"></code> meters</p>
-                    <p class="text-xs text-gray-500 pt-2">Formula: $$v = 331.3 + 0.606T$$</p>
-                </div>
-                <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-600">
-                    <label for="distance-reverse" class="block font-medium mb-1">Reverse Calculation: Enter Distance (m):</label>
-                    <div class="flex space-x-2">
-                        <input type="number" id="distance-reverse" placeholder="Distance (m)" oninput="calculateSoundwaveReverse()"
-                               class="flex-grow p-2 border border-gray-300 rounded-lg font-mono">
-                        <button onclick="calculateSoundwaveReverse()" class="bg-red-400 text-white p-2 rounded-lg hover:bg-red-500 transition font-medium">Calculate Time</button>
-                    </div>
-                    <p class="mt-2 text-sm text-gray-700">Calculated Time (t = d / v): <code id="time-reverse-output" class="font-mono font-bold text-red-900">--</code> seconds</p>
-                </div>
-            </div>
-        `;
-
-        function calculateSoundwave() {
-            const tempInput = document.getElementById('temperature');
-            const timeInput = document.getElementById('time');
-            const speedOutput = document.getElementById('speed-output');
-            const distanceOutput = document.getElementById('distance-output');
-
-            const T = parseFloat(tempInput.value) || 0;
-            const t = parseFloat(timeInput.value) || 0;
-
-            // Speed of sound formula: v = 331.3 + 0.606 * T
-            const v = 331.3 + (0.606 * T);
-            
-            // Distance formula: d = v * t
-            const d = v * t;
-
-            speedOutput.textContent = v.toFixed(3);
-            distanceOutput.textContent = d.toFixed(3);
-
-            // Also update the reverse calculation if it has input
-            calculateSoundwaveReverse(v);
-        }
-        
-        function calculateSoundwaveReverse(currentSpeed = null) {
-            const tempInput = document.getElementById('temperature');
-            const distReverseInput = document.getElementById('distance-reverse');
-            const timeReverseOutput = document.getElementById('time-reverse-output');
-            
-            if (!distReverseInput || !timeReverseOutput) return;
-
-            const T = parseFloat(tempInput.value) || 0;
-            const d = parseFloat(distReverseInput.value);
-            
-            if (isNaN(d) || d <= 0) {
-                timeReverseOutput.textContent = '--';
-                return;
-            }
-
-            // Calculate speed if not provided (avoids dependency on the main calculation path)
-            const v = currentSpeed !== null ? currentSpeed : (331.3 + (0.606 * T));
-
-            // Time formula: t = d / v
-            const t = d / v;
-            
-            timeReverseOutput.textContent = t.toFixed(6);
-        }
-
-
-        // --- Tool 4: Room Info Lookup Logic and Template ---
-        const roomInfoTemplate = `
-            <div class="space-y-4">
-                <p class="text-gray-600">Search for VUB room/auditorium information by name or partial ID.</p>
-                <input type="text" id="room-search-input" oninput="searchRoomInfo()" placeholder="e.g., Velkeniers or Q.0.5"
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                <div id="room-results-container" class="space-y-3 max-h-80 overflow-y-auto p-2">
-                    <p class="text-center text-gray-500">Start typing to search rooms.</p>
-                </div>
-            </div>
-        `;
-
-        function searchRoomInfo() {
-            const inputElement = document.getElementById('room-search-input');
-            const resultsContainer = document.getElementById('room-results-container');
-            const query = inputElement.value.toLowerCase().trim();
-            
-            resultsContainer.innerHTML = '';
-
-            if (query.length < 2) {
-                resultsContainer.innerHTML = '<p class="text-center text-gray-500">Keep typing (min 2 characters) to search rooms.</p>';
-                return;
-            }
-
-            const filteredRooms = roomData.filter(room => 
-                room.name.toLowerCase().includes(query) || 
-                room.id.toLowerCase().includes(query) ||
-                room.campus.toLowerCase().includes(query)
-            );
-
-            if (filteredRooms.length === 0) {
-                resultsContainer.innerHTML = '<p class="text-center text-red-500 font-medium">No rooms found matching your query.</p>';
-                return;
-            }
-
-            filteredRooms.forEach(room => {
-                const facilitiesHtml = room.facilities.map(f => `<span class="inline-block bg-yellow-200 text-yellow-800 text-xs px-2 py-0.5 rounded-full">${f}</span>`).join(' ');
-
-                const roomCard = `
-                    <div class="bg-white border border-yellow-300 rounded-lg p-4 shadow-md">
-                        <h5 class="text-xl font-bold text-yellow-800">${room.name}</h5>
-                        <p class="text-sm text-gray-500 mb-2">ID: ${room.id.toUpperCase()}</p>
-                        <div class="grid grid-cols-2 gap-2 text-sm">
-                            <p><span class="font-semibold text-gray-700">Campus:</span> ${room.campus}</p>
-                            <p><span class="font-semibold text-gray-700">Capacity:</span> <span class="text-lg font-mono text-yellow-900">${room.capacity}</span></p>
-                        </div>
-                        <div class="mt-3">
-                            <p class="font-semibold text-gray-700 mb-1">Key Facilities:</p>
-                            <div class="flex flex-wrap gap-2">${facilitiesHtml}</div>
-                        </div>
-                    </div>
-                `;
-                resultsContainer.innerHTML += roomCard;
-            });
-        }
-
-
         // --- General Utility ---
-        // 'isPreformatted' is a flag to indicate if the text content already contains newlines/pre-formatting
         function copyToClipboard(elementId, isPreformatted = false, buttonId = null) {
             const element = document.getElementById(elementId);
             let textToCopy;
@@ -1012,6 +943,23 @@
                     }, 1500);
                 }
             }
+        }
+        
+        // New function for copying raw value from an event source element
+        function copyToClipboardValue(value, element) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = value;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Visual feedback on the element itself
+            const originalText = element.textContent;
+            element.textContent = 'Copied!';
+            setTimeout(() => {
+                element.textContent = originalText;
+            }, 1000);
         }
 
     </script>
