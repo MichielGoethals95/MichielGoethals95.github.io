@@ -21,6 +21,20 @@
             transform: translateY(-2px) scale(1.01);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        /* Custom scrollbar for output area */
+        #scan-output-area::-webkit-scrollbar, #json-output-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        #scan-output-area::-webkit-scrollbar-thumb, #json-output-area::-webkit-scrollbar-thumb {
+            background-color: #9ca3af;
+            border-radius: 4px;
+        }
+        #vendor-output-area code {
+            /* Ensure the code blocks inside the output look good */
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -47,6 +61,17 @@
             Network
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Tool 7: MAC Vendor Lookup -->
+            <div id="tool-mac-vendor" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-blue-500" onclick="openModal('mac-vendor-lookup')">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2a3 3 0 00-3 3v2m8-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">MAC Vendor Lookup</h2>
+                        <p class="text-sm text-gray-500">Identify the manufacturer (OUI) and possible model.</p>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Tool 1: MAC Address Formatter -->
             <div id="tool-mac-formatter" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-indigo-500" onclick="openModal('mac-formatter')">
                 <div class="flex items-center space-x-4">
@@ -68,7 +93,37 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tool 5: IP Range Scanner -->
+            <div id="tool-ip-scanner" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-purple-500" onclick="openModal('ip-scanner')">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 0a2 2 0 100 4 2 2 0 000-4zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">IP Range Scanner (Simulated)</h2>
+                        <p class="text-sm text-gray-500">Scan a mock IP range and discover devices.</p>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Category: Data Utilities -->
+        <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-gray-200 pb-2 mb-6 mt-10 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Data Utilities
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Tool 6: CSV/JSON Converter -->
+            <div id="tool-csv-converter" class="tool-card bg-white p-6 rounded-xl shadow-md transition duration-300 cursor-pointer border-t-4 border-orange-500" onclick="openModal('csv-converter')">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">CSV/JSON Converter</h2>
+                        <p class="text-sm text-gray-500">Convert spreadsheet (CSV) data to structured JSON.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Category: Audio/Acoustic Tools -->
         <h2 class="text-2xl font-bold text-gray-700 border-b-2 border-gray-200 pb-2 mb-6 mt-10 flex items-center">
@@ -116,7 +171,7 @@
         <div class="fixed inset-0" onclick="closeModal()"></div>
 
         <!-- Modal Content Container -->
-        <div class="modal-content bg-white rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-2xl transform scale-95 transition-transform duration-300 relative">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-4xl transform scale-95 transition-transform duration-300 relative">
             
             <!-- Close Button -->
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition" onclick="closeModal()">
@@ -147,6 +202,21 @@
             { id: 'b03', name: 'Aula Q.B.03', campus: 'Etterbeek', capacity: 400, facilities: ['High-End Projection', 'Stage Lighting', 'Professional Sound System'] },
             { id: 'r210', name: 'R.2.10 (Meeting)', campus: 'Etterbeek', capacity: 12, facilities: ['TV Display', 'Small VC System'] },
         ];
+        
+        // --- MAC Vendor Lookup Data (OUI Prefixes) ---
+        // Key is the 6-digit OUI (Organizationally Unique Identifier)
+        const macVendorData = {
+            'C44268': { vendor: 'Crestron Electronics, Inc.', model: 'Crestron AV Control/Switching Gear (Standard VUB)' },
+            '908D6E': { vendor: 'Dell Inc.', model: 'Common Dell PC/Laptop' },
+            'A4307A': { vendor: 'Samsung Electronics Co.,Ltd', model: 'QBR Series Display' },
+            'D0C24E': { vendor: 'Samsung Electronics Co.,Ltd', model: 'QBB Series Display' },
+            '000D95': { vendor: 'Cisco Systems, Inc', model: 'Network Access Point (WAP) or Switch' },
+            '00000C': { vendor: 'Cisco Systems, Inc', model: 'Network Protocol MAC or Legacy Gear' },
+            '002161': { vendor: 'Samsung Electronics Co.,Ltd', model: 'Older Samsung Display' },
+            '0050B6': { vendor: 'Extron Electronics', model: 'Extron Video Switch/Scaler' },
+            '001E90': { vendor: 'LG Electronics', model: 'LG Display or TV' },
+            '58B035': { vendor: 'Shure, Incorporated', model: 'Shure Audio DSP/Mic Array' }
+        };
 
 
         // --- Modal Control Functions ---
@@ -162,8 +232,14 @@
                 modalTitle.textContent = 'MAC Address Formatter';
                 modalContent.innerHTML = macFormatterTemplate;
                 // Add default placeholder text for immediate formatting
-                document.getElementById('mac-input').value = 'AABBCCDDEEFF\n1234.5678.90AB\n0C-0D-0E-0F-10-11\n';
+                document.getElementById('mac-input').value = 'C44268DDEEFF\n1234.5678.90AB\n0C-0D-0E-0F-10-11\n';
                 formatMac(); 
+            } else if (toolId === 'mac-vendor-lookup') {
+                modalTitle.textContent = 'MAC Vendor Lookup';
+                modalContent.innerHTML = macVendorLookupTemplate;
+                // Set default example and run lookup immediately
+                document.getElementById('mac-vendor-input').value = 'A4:30:7A:11:22:33';
+                lookupMacVendor();
             } else if (toolId === 'vubnet-tester') {
                 modalTitle.textContent = 'VUBnet Tester (Simulated)';
                 modalContent.innerHTML = vubnetTesterTemplate('172.25.117.254');
@@ -175,6 +251,22 @@
                 modalTitle.textContent = 'VUB Room Information Lookup';
                 modalContent.innerHTML = roomInfoTemplate;
                 document.getElementById('room-search-input').focus();
+            } else if (toolId === 'ip-scanner') {
+                modalTitle.textContent = 'IP Range Scanner (Simulated)';
+                modalContent.innerHTML = ipScannerTemplate;
+                // Set default scan values
+                document.getElementById('ip-start-input').value = '192.168.1.1';
+                document.getElementById('ip-end-input').value = '192.168.1.10';
+            } else if (toolId === 'csv-converter') {
+                modalTitle.textContent = 'CSV to JSON Converter';
+                modalContent.innerHTML = csvConverterTemplate;
+                // Set default CSV example
+                document.getElementById('csv-input').value = 
+                    'RoomID,SystemType,IP,MacAddress\n' + 
+                    'Q.0.5,Extron Switcher,172.25.117.10,00:0C:C7:11:AA:BB\n' + 
+                    'B.1.0,Shure Mic DSP,172.25.117.11,00:0E:C6:22:CC:DD';
+                // Trigger conversion on load with default example
+                convertCsvToJson();
             }
         }
 
@@ -190,6 +282,78 @@
                 closeModal();
             }
         });
+
+        // --- Tool 7: MAC Vendor Lookup Logic and Template ---
+        const macVendorLookupTemplate = `
+            <div class="space-y-4">
+                <p class="text-gray-600">Enter a full MAC address or just the 6-digit OUI prefix to look up the manufacturer and possible model.</p>
+                
+                <input type="text" id="mac-vendor-input" oninput="lookupMacVendor()" placeholder="e.g., A4:30:7A:11:22:33 or C44268"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-base tracking-wider uppercase">
+
+                <div id="vendor-output-area" class="bg-blue-50 border border-blue-300 rounded-lg p-5 shadow-inner min-h-[10rem]">
+                    <h4 class="text-xl font-bold text-blue-800 mb-3" id="vendor-title">Awaiting Input...</h4>
+                    <p class="text-sm text-gray-700 mb-2">OUI/Prefix Used: <code id="oui-output" class="text-blue-900 font-bold">--</code></p>
+                    
+                    <div id="vendor-details" class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-2M5 21h2M12 21V9"></path></svg>
+                            <p class="text-md text-gray-700 font-semibold">Manufacturer:</p>
+                            <p id="manufacturer-output" class="text-md font-mono text-gray-900">--</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <p class="text-md text-gray-700 font-semibold">VUB Model/Context:</p>
+                            <p id="model-output" class="text-md font-mono text-gray-900">--</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        function lookupMacVendor() {
+            const inputElement = document.getElementById('mac-vendor-input');
+            const vendorTitle = document.getElementById('vendor-title');
+            const ouiOutput = document.getElementById('oui-output');
+            const manufacturerOutput = document.getElementById('manufacturer-output');
+            const modelOutput = document.getElementById('model-output');
+
+            if (!inputElement || !vendorTitle) return;
+
+            // 1. Clean and extract the OUI (first 6 characters)
+            let rawInput = inputElement.value.toUpperCase();
+            // Remove all non-hex characters (spaces, colons, hyphens, periods)
+            let cleanMac = rawInput.replace(/[^0-9A-F]/g, '');
+            let oui = cleanMac.substring(0, 6);
+
+            ouiOutput.textContent = oui;
+
+            if (oui.length < 6) {
+                vendorTitle.textContent = 'Awaiting Input...';
+                manufacturerOutput.textContent = 'Input must contain at least 6 hexadecimal characters.';
+                modelOutput.textContent = '--';
+                return;
+            }
+
+            // 2. Lookup against the data set
+            const match = macVendorData[oui];
+
+            if (match) {
+                // Match Found
+                vendorTitle.textContent = 'Vendor Found!';
+                vendorTitle.classList.remove('text-red-600');
+                vendorTitle.classList.add('text-blue-800');
+                manufacturerOutput.textContent = match.vendor;
+                modelOutput.textContent = match.model;
+            } else {
+                // No Match
+                vendorTitle.textContent = 'No Match Found';
+                vendorTitle.classList.remove('text-blue-800');
+                vendorTitle.classList.add('text-red-600');
+                manufacturerOutput.textContent = 'The OUI prefix is not recognized in our database.';
+                modelOutput.textContent = 'This may be a new or uncommon device. Check the full MAC address for verification.';
+            }
+        }
 
 
         // --- Tool 1: MAC Address Formatter Logic and Template ---
@@ -224,7 +388,7 @@
                     <p class="text-sm font-medium text-gray-500 mb-1">Formatted Output:</p>
                     <pre id="mac-output" class="block text-sm font-mono text-gray-800 whitespace-pre-wrap min-h-[3rem]"></pre>
                 </div>
-                <button onclick="copyToClipboard('mac-output', true)" class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-semibold disabled:opacity-50" id="mac-copy-btn">
+                <button onclick="copyToClipboard('mac-output', true, 'mac-copy-btn')" class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-semibold disabled:opacity-50" id="mac-copy-btn">
                     Copy All to Clipboard
                 </button>
             </div>
@@ -364,6 +528,314 @@
                 button.disabled = false;
                 ipInput.disabled = false;
                 loading.classList.add('hidden');
+            }
+        }
+
+
+        // --- Tool 5: IP Range Scanner Logic and Template (Simulated) ---
+        const ipScannerTemplate = `
+            <div class="space-y-4">
+                <p class="text-gray-600">Enter the starting and ending IP addresses for the simulated scan.</p>
+                
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-1">
+                        <label for="ip-start-input" class="block text-sm font-medium text-gray-700">Start IP Address (e.g., 192.168.1.1)</label>
+                        <input type="text" id="ip-start-input" placeholder="192.168.1.1"
+                               class="w-full p-2 border border-gray-300 rounded-lg font-mono focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div class="flex-1">
+                        <label for="ip-end-input" class="block text-sm font-medium text-gray-700">End IP Address (e.g., 192.168.1.10)</label>
+                        <input type="text" id="ip-end-input" placeholder="192.168.1.10"
+                               class="w-full p-2 border border-gray-300 rounded-lg font-mono focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                </div>
+                
+                <button onclick="startIpScan()" id="ip-scan-button" class="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition font-semibold">
+                    Start Simulated Scan
+                </button>
+
+                <div class="mt-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Scan Results:</h4>
+                    <div id="scan-output-area" class="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-96 overflow-y-auto space-y-2">
+                        <p class="text-gray-500 text-center" id="scan-status">Awaiting scan input. Recommended range is small (e.g., 1-10).</p>
+                        <!-- Results will be injected here -->
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2" id="scan-summary"></p>
+                </div>
+            </div>
+        `;
+        
+        // Regex to validate IPv4 format (basic check)
+        const IP_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
+        // Helper function to convert IP string to an integer for easy iteration/comparison
+        function ipToInt(ip) {
+            return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+        }
+
+        // Helper function to convert integer back to IP string
+        function intToIp(int) {
+            return [
+                (int >> 24) & 0xFF,
+                (int >> 16) & 0xFF,
+                (int >> 8) & 0xFF,
+                int & 0xFF
+            ].join('.');
+        }
+
+        // Helper function to generate a random MAC address
+        function generateRandomMac() {
+            const hex = '0123456789ABCDEF';
+            let mac = '';
+            for (let i = 0; i < 12; i++) {
+                mac += hex[Math.floor(Math.random() * 16)];
+            }
+            // Format to AA:BB:CC:DD:EE:FF
+            return mac.match(/.{1,2}/g).join(':');
+        }
+
+        // Helper function to generate a random hostname prefix
+        function getRandomHostPrefix() {
+            const prefixes = ['AV-CTRL', 'VUB-WAP', 'VUB-PRJ', 'VUB-NVR', 'VUB-IPCAM', 'AV-DISP'];
+            return prefixes[Math.floor(Math.random() * prefixes.length)];
+        }
+
+        // Simulates the scanning process for a single IP
+        function simulateScan(ip) {
+            // Randomly decide if the host is up (approx. 40% chance)
+            const isUp = Math.random() < 0.4; 
+            
+            if (isUp) {
+                const lastOctet = ip.split('.').pop();
+                return {
+                    ip: ip,
+                    status: 'Up',
+                    hostname: `${getRandomHostPrefix()}-${lastOctet.padStart(3, '0')}`,
+                    macAddress: generateRandomMac(),
+                    latency: (Math.random() * 50 + 10).toFixed(2) + 'ms'
+                };
+            } else {
+                return {
+                    ip: ip,
+                    status: 'Down',
+                };
+            }
+        }
+
+        async function startIpScan() {
+            const startInput = document.getElementById('ip-start-input');
+            const endInput = document.getElementById('ip-end-input');
+            const scanButton = document.getElementById('ip-scan-button');
+            const outputArea = document.getElementById('scan-output-area');
+            const scanStatus = document.getElementById('scan-status');
+            const scanSummary = document.getElementById('scan-summary');
+
+            const startIp = startInput.value.trim();
+            const endIp = endInput.value.trim();
+            
+            // 1. Validation
+            if (!IP_REGEX.test(startIp) || !IP_REGEX.test(endIp)) {
+                scanStatus.textContent = 'Error: Please enter two valid IPv4 addresses (e.g., 192.168.1.1).';
+                return;
+            }
+
+            const startInt = ipToInt(startIp);
+            const endInt = ipToInt(endIp);
+
+            if (startInt >= endInt) {
+                scanStatus.textContent = 'Error: Start IP must be lower than End IP.';
+                return;
+            }
+            
+            const totalIps = endInt - startInt + 1;
+            const MAX_IPS = 100;
+
+            if (totalIps > MAX_IPS) {
+                scanStatus.textContent = `Error: The range is too large (${totalIps} IPs). Maximum simulated scan size is ${MAX_IPS} IPs.`;
+                return;
+            }
+
+            // Check if the first three octets match (only scanning within the same subnet is supported for this sim)
+            const startPrefix = startIp.split('.').slice(0, 3).join('.');
+            const endPrefix = endIp.split('.').slice(0, 3).join('.');
+
+            if (startPrefix !== endPrefix) {
+                scanStatus.textContent = 'Error: For simplicity, please enter IPs within the same C-class subnet (first three octets must match).';
+                return;
+            }
+
+
+            // 2. Setup
+            scanButton.disabled = true;
+            outputArea.innerHTML = '';
+            scanStatus.textContent = `Scanning range ${startIp} to ${endIp}...`;
+            scanSummary.textContent = 'Scan in progress...';
+            let devicesUp = 0;
+            const startTime = Date.now();
+
+            // 3. Scan Loop (Simulated)
+            for (let currentInt = startInt; currentInt <= endInt; currentInt++) {
+                const ip = intToIp(currentInt);
+                
+                const result = await new Promise(resolve => {
+                    // Simulate network latency (20ms to 200ms per IP)
+                    const delay = Math.random() * 180 + 20;
+                    setTimeout(() => resolve(simulateScan(ip)), delay);
+                });
+
+                let statusClass = result.status === 'Up' ? 'bg-green-100 border-green-400' : 'bg-gray-100 border-gray-300';
+                let statusText = result.status === 'Up' ? 'UP' : 'DOWN';
+                let detailHtml = '';
+                
+                if (result.status === 'Up') {
+                    devicesUp++;
+                    detailHtml = `
+                        <div class="flex justify-between text-xs text-gray-700 mt-1">
+                            <span>Host: <code class="font-bold text-green-700">${result.hostname}</code></span>
+                            <span>MAC: <code class="font-mono text-purple-700">${result.macAddress}</code></span>
+                            <span>Latency: ${result.latency}</span>
+                        </div>
+                    `;
+                } else {
+                    detailHtml = '<span class="text-xs text-red-500">Host did not respond to simulated probe.</span>';
+                }
+
+                const itemHtml = `
+                    <div class="${statusClass} p-3 rounded-lg border">
+                        <div class="flex justify-between items-center font-bold">
+                            <span class="font-mono text-lg">${result.ip}</span>
+                            <span class="text-sm px-2 py-0.5 rounded-full ${result.status === 'Up' ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'}">${statusText}</span>
+                        </div>
+                        ${detailHtml}
+                    </div>
+                `;
+
+                // Add result to the top for easier viewing of latest results
+                outputArea.insertAdjacentHTML('afterbegin', itemHtml);
+            }
+
+            // 4. Final Summary
+            const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+            scanStatus.textContent = 'Scan Complete.';
+            scanSummary.textContent = `Summary: ${devicesUp} devices found active out of ${totalIps} scanned in ${totalTime} seconds.`;
+            scanButton.disabled = false;
+        }
+
+
+        // --- Tool 6: CSV to JSON Converter Logic and Template ---
+        const csvConverterTemplate = `
+            <div class="space-y-4">
+                <p class="text-gray-600">Paste your CSV data below. You can easily export this from Excel or any spreadsheet program.</p>
+                <textarea id="csv-input" oninput="convertCsvToJson()" rows="6" placeholder="Example:\nRoomID,SystemType,IP\nQ.0.5,Extron Switcher,172.25.117.10"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm font-mono"></textarea>
+
+                <!-- Configuration Options -->
+                <div class="flex flex-col sm:flex-row gap-4 bg-gray-50 p-4 rounded-lg border">
+                    <!-- Delimiter -->
+                    <div class="flex-1">
+                        <label for="csv-delimiter" class="block text-sm font-medium text-gray-700 mb-1">Delimiter:</label>
+                        <select id="csv-delimiter" onchange="convertCsvToJson()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
+                            <option value=",">Comma (,)</option>
+                            <option value=";">Semicolon (;)</option>
+                            <option value="\t">Tab (\t)</option>
+                            <option value="|">Pipe (|)</option>
+                        </select>
+                    </div>
+                    <!-- Header Row -->
+                    <div class="flex-1">
+                        <label for="csv-header" class="block text-sm font-medium text-gray-700 mb-1">First row is Header:</label>
+                        <select id="csv-header" onchange="convertCsvToJson()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
+                            <option value="true">Yes, use as keys</option>
+                            <option value="false">No, use generic keys (col1, col2...)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-orange-100 p-4 rounded-lg shadow-inner">
+                    <p class="text-sm font-medium text-orange-800 mb-1">JSON Output:</p>
+                    <pre id="json-output-area" class="block text-xs font-mono text-gray-800 whitespace-pre-wrap min-h-[10rem] max-h-80 overflow-y-auto bg-white p-2 rounded-md"></pre>
+                </div>
+                <button onclick="copyToClipboard('json-output-area', true, 'json-copy-btn')" class="w-full bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 transition font-semibold disabled:opacity-50" id="json-copy-btn">
+                    Copy JSON to Clipboard
+                </button>
+            </div>
+        `;
+
+        function convertCsvToJson() {
+            const csvInput = document.getElementById('csv-input');
+            const delimiterSelect = document.getElementById('csv-delimiter');
+            const headerSelect = document.getElementById('csv-header');
+            const outputArea = document.getElementById('json-output-area');
+            const copyButton = document.getElementById('json-copy-btn');
+
+            if (!csvInput || !delimiterSelect || !headerSelect || !outputArea) return;
+
+            const csvText = csvInput.value.trim();
+            const delimiter = delimiterSelect.value;
+            const hasHeader = headerSelect.value === 'true';
+
+            outputArea.textContent = '';
+            copyButton.disabled = true;
+
+            if (csvText === '') {
+                outputArea.textContent = 'Paste CSV data to see JSON output here.';
+                return;
+            }
+
+            try {
+                // Split into lines and filter out empty lines
+                const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                if (lines.length === 0) {
+                    outputArea.textContent = 'No valid data found in CSV input.';
+                    return;
+                }
+
+                let headers = [];
+                let dataLines = lines;
+
+                // Simple check for quotes in a line (very basic handling)
+                const parseLine = (line, sep) => {
+                    // Simple split by delimiter, ignoring quotes for simplicity in this utility
+                    return line.split(sep).map(item => item.trim().replace(/^"|"$/g, ''));
+                };
+
+                if (hasHeader) {
+                    headers = parseLine(lines[0], delimiter);
+                    dataLines = lines.slice(1);
+                } else {
+                    // Create generic headers if no header row is specified
+                    const maxCols = parseLine(lines[0], delimiter).length;
+                    for (let i = 1; i <= maxCols; i++) {
+                        headers.push(`col${i}`);
+                    }
+                }
+
+                const jsonArray = [];
+                for (const line of dataLines) {
+                    const values = parseLine(line, delimiter);
+                    if (values.length !== headers.length) {
+                        // Skip or report lines that don't match header length
+                        console.warn(`Skipping line due to column mismatch: ${line}`);
+                        continue;
+                    }
+
+                    const obj = {};
+                    for (let i = 0; i < headers.length; i++) {
+                        // Use a fallback key if header is empty
+                        const key = headers[i] || `col${i + 1}`;
+                        obj[key] = values[i];
+                    }
+                    jsonArray.push(obj);
+                }
+
+                // Output the formatted JSON
+                const jsonOutput = JSON.stringify(jsonArray, null, 2);
+                outputArea.textContent = jsonOutput;
+                copyButton.disabled = jsonArray.length === 0;
+
+            } catch (error) {
+                outputArea.textContent = `Error processing CSV: ${error.message}. Check your delimiter and format.`;
+                copyButton.disabled = true;
             }
         }
 
@@ -508,7 +980,7 @@
 
         // --- General Utility ---
         // 'isPreformatted' is a flag to indicate if the text content already contains newlines/pre-formatting
-        function copyToClipboard(elementId, isPreformatted = false) {
+        function copyToClipboard(elementId, isPreformatted = false, buttonId = null) {
             const element = document.getElementById(elementId);
             let textToCopy;
             
@@ -530,12 +1002,15 @@
             document.body.removeChild(tempInput);
 
             // Give visual feedback
-            const copyButton = document.getElementById('mac-copy-btn');
-            if (copyButton) {
-                copyButton.textContent = 'Copied!';
-                setTimeout(() => {
-                    copyButton.textContent = 'Copy All to Clipboard';
-                }, 1500);
+            if (buttonId) {
+                const copyButton = document.getElementById(buttonId);
+                if (copyButton) {
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                    }, 1500);
+                }
             }
         }
 
