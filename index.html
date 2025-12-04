@@ -316,7 +316,27 @@
 
         // Tool 4: Room Info Lookup Data
         const roomData = [
-            { id: 'velkeniers', name: 'Auditorium Velkeniers', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.01', name: 'Auditorium Velkeniers', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.01', name: 'Auditorium Van Den Driessche', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.01', name: 'Auditorium 3', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.01', name: 'Auditorium 4', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.01', name: 'Auditorium 5', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.20', name: 'Auditorium Brouwer', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.35', name: 'FMR', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.45', name: 'A045', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JA.0.47', name: 'A047', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JB.0.06', name: 'B006', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JB.0.07', name: 'B007', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JB.0.09', name: 'B009', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JB.0.10', name: 'B010/011', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JB.0.17', name: 'B017', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JB.0.25', name: 'B025/026', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JC.0.28', name: 'C028', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JD.1.40', name: 'D140', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JG.0.45', name: 'Vergaderzaal Rombaut', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JH.0.07', name: 'Labo H007', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+            { id: 'JH.0.19', name: 'H019', campus: 'Jette', capacity: 190, facilities: ['Projector', 'Large Screen', 'Fixed Sound System', 'Video Conferencing'] },
+
             { id: 'q5', name: 'Q.0.5', campus: 'Etterbeek', capacity: 80, facilities: ['Projector', 'Whiteboard', 'Basic Audio'] },
             { id: 'g038', name: 'G.038', campus: 'Jette', capacity: 40, facilities: ['PC Lab', 'Standard Display'] },
             { id: 'b03', name: 'Aula Q.B.03', campus: 'Etterbeek', capacity: 400, facilities: ['High-End Projection', 'Stage Lighting', 'Professional Sound System'] },
@@ -329,17 +349,13 @@
             { manufacturer: 'Shure', model: 'MXA910 (Ceiling Mic)', link: 'https://www.shure.com/en-US/support/downloads/MXA910/user_guide' },
             { manufacturer: 'Extron', model: 'DTP CrossPoint 84', link: 'https://www.extron.com/product/dtpcrosspoint84' },
             { manufacturer: 'Crestron', model: 'DM-MD16x16', link: 'https://www.crestron.com/Products/Control-Hardware-Software/Switchers/DigitalMedia-Switchers/DM-MD16X16' },
-            { manufacturer: 'Dell', model: 'P2419H Monitor', link: 'https://dl.dell.com/manuals/all-products/esuprt_display_projector/esuprt_display/dell-p2419h-monitor_user%27s-guide_en-us.pdf' },
             { manufacturer: 'Samsung', model: 'QM85R Display', link: 'https://downloadcenter.samsung.com/content/UM/202008/20200827110134015/BN46-00898A-02_Manual_English.pdf' },
-            { manufacturer: 'Cisco', model: 'Room Kit Mini', link: 'https://www.cisco.com/c/en/us/td/docs/telepresence/endpoint/room-kit/room-kit-mini/ce-deployment-guide-room-kit-mini.html' },
         ];
 
         // Tool 9: VUB IP Reference Data (New Tool)
         const vubIpData = [
             { type: 'DNS Server', name: 'VUB DNS 1 (Primary)', ip: '134.184.122.1', description: 'Primary VUB internal DNS resolver.' },
             { type: 'DNS Server', name: 'VUB DNS 2 (Secondary)', ip: '134.184.123.1', description: 'Secondary VUB internal DNS resolver.' },
-            { type: 'Loopback', name: 'Localhost', ip: '127.0.0.1', description: 'Standard loopback address for local testing (All devices).' },
-            { type: 'Public Test', name: 'Google DNS', ip: '8.8.8.8', description: 'External public DNS for connectivity tests.' },
         ];
 
         // Tool 7: MAC Vendor Lookup Data (OUI Prefixes)
@@ -966,3 +982,4 @@
 
 </body>
 </html>
+
